@@ -1,16 +1,7 @@
 import { useState } from 'react'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { initializeApp } from 'firebase/app'
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-}
-
-initializeApp(firebaseConfig)
 
 export default function Login() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
@@ -18,8 +9,17 @@ export default function Login() {
     e.preventDefault()
     setError('')
     try {
-      await signInWithEmailAndPassword(getAuth(), email, password)
-      window.location.href = '/'
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      })
+      if (res.ok) {
+        window.location.href = '/'
+      } else {
+        const data = await res.json()
+        setError(data.message || 'Login failed')
+      }
     } catch (err: any) {
       setError(err.message)
     }
@@ -31,10 +31,10 @@ export default function Login() {
         <h1 className="text-xl font-bold">Login</h1>
         {error && <p className="text-red-500">{error}</p>}
         <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
           className="border px-2 py-1 w-64"
           required
         />

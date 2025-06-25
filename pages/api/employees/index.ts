@@ -7,7 +7,7 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
   try {
     const pool = await connectDb()
     const result = await pool.request().query(
-      `SELECT EMP_ID, NAME, ROLE, ACTIVE FROM EMPLOYEE WHERE ACTIVE = 1`
+      `SELECT EMPLOYEE_NUMBER AS EMP_ID, EMPLOYEE_NAME AS NAME, ROLE, ACTIVE FROM MECHANIC WHERE ACTIVE = 1`
     )
     const employees: Employee[] = result.recordset.map((row: any) => ({
       empId: row.EMP_ID,
