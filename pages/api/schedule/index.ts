@@ -66,8 +66,10 @@ const createShift = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'POST') return createShift(req, res)
-  return getShifts(req, res)
+  if (req.method === 'POST') {
+    return withAuth(createShift, 'Manager')(req, res)
+  }
+  return withAuth(getShifts)(req, res)
 }
 
-export default withAuth(handler)
+export default handler

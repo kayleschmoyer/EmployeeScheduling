@@ -3,6 +3,7 @@ import { Shift } from '../models/Shift'
 import Calendar from '../components/Calendar'
 import { Employee } from '../models/Employee'
 import EmployeeSelector from '../components/EmployeeSelector'
+import { verifyToken } from '../lib/auth'
 
 export default function Home() {
   const [shifts, setShifts] = useState<Shift[]>([])
@@ -26,4 +27,16 @@ export default function Home() {
       <Calendar shifts={shifts} />
     </div>
   )
+}
+
+export async function getServerSideProps({ req }: { req: any }) {
+  try {
+    const token = req.cookies.token
+    verifyToken(token)
+    return { props: {} }
+  } catch {
+    return {
+      redirect: { destination: '/login', permanent: false },
+    }
+  }
 }
